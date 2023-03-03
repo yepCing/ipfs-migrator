@@ -4,31 +4,82 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>IPFS Pin Sync</title>
+  <link rel="icon" href="/favicon.ico" />
+  <title>IPFS Migrator</title>
+  <style>
+    .nav-bg {
+      background: linear-gradient(90deg, #A8B2FE 0%, #D5A1FF 100%);
+    }
+
+    .nav-text {
+      color: #FFF;
+    }
+
+    .transition-wrap {
+      position: relative;
+    }
+
+    .sync-btn {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+    }
+
+    .btn-syncing {
+      background: #25C55F !important;
+    }
+
+    .btn-syncing>img {
+      animation: move 1s ease-out infinite;
+    }
+
+    /* .arrow {
+      animation: move 1s ease-out infinite;
+
+    } */
+
+    @keyframes move {
+      0% {
+        transform: translateX(0px);
+      }
+
+      50% {
+        transform: translateX(5px);
+
+      }
+
+      100% {
+        transform: translateX(0px);
+
+      }
+    }
+  </style>
 </head>
 
 <body class="h-full">
   <div class="min-h-full">
-    <div class="bg-[#343a40] pb-32">
-      <nav class="bg-[#343a40]">
+    <div class="nav-bg pb-32">
+      <nav class="bg-white">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          <div class="border-b border-gray-700">
+          <div class="border-b border-white">
             <div class="flex items-center justify-between h-16 px-4 sm:px-0">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <img class="mx-auto block w-40" src="images/filebase-logo.svg" />
+                  <img class="mx-auto block w-100" src="images/filebase-logo.svg" />
                 </div>
                 <div class="hidden md:block">
                   <div class="ml-10 flex items-baseline space-x-4">
-                    <a href="https://docs.filebase.com/"
-                      class="text-gray-300 hover:bg-[#343a40] hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                      aria-current="page">Documentation</a>
-
-                    <a href="https://github.com/filebase/ipfs-pin-sync"
-                      class="text-gray-300 hover:bg-[#343a40] hover:text-white px-3 py-2 rounded-md text-sm font-medium">GitHub</a>
-
-                    <a href="https://discord.com/invite/rDDzEAHW2H"
-                      class="text-gray-300 hover:bg-[#343a40] hover:text-white px-3 py-2 rounded-md text-sm font-medium">Support</a>
+                    <a href="https://dashboard.4everland.org/bucket/pinning-service" target="__blank"
+                      class="color-black  hover:bg-[#343a40] hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                      aria-current="page">Dashboard</a>
+                    <a href="https://github.com/4everland/" target="__blank"
+                      class="color-black hover:bg-[#343a40] hover:text-white px-3 py-2 rounded-md text-sm font-medium">GitHub</a>
+                    <a href="https://docs.4everland.org/storage/4ever-pin/ipfs-pin-sync" target="__blank"
+                      class="color-black hover:bg-[#343a40] hover:text-white px-3 py-2 rounded-md text-sm font-medium">Documentation</a>
+                    <a href="https://discord.gg/4everland" target="__blank"
+                      class="color-black hover:bg-[#343a40] hover:text-white px-3 py-2 rounded-md text-sm font-medium">Support</a>
                   </div>
                 </div>
               </div>
@@ -38,7 +89,7 @@
       </nav>
       <header class="py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 class="text-3xl font-bold text-white">IPFS Pin Sync</h1>
+          <h1 class="text-3xl font-bold text-white">IPFS Migrator</h1>
         </div>
       </header>
     </div>
@@ -46,10 +97,14 @@
     <main class="-mt-32">
       <div class="max-w-7xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-lg shadow px-5 py-6 sm:px-6">
-          <div class="border-4 border-dashed border-gray-200 rounded-lg h-96">
-            <div class="grid grid-cols-3 gap-4">
-              <div>
+          <div class="transition-wrap">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="border-4 border-dashed border-gray-200 rounded-lg px-5 py-5">
                 <div class="sm:mx-auto sm:w-full sm:max-w-md">
+                  <div class="px-4 py-5 mb-4 bg-[#F8F5FF] shadow rounded-lg overflow-hidden sm:p-6">
+                    <span class="text-xl font-medium text-gray-500 truncate">Progress</span>
+                    <span class="mt-1 ml-5 text-primary text-xl font-semibold" id="destinationProgress"></span>
+                  </div>
                   <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                     <h5 class="text-center">Source Provider</h5><br><br>
                     <form name="sourceLogin" class="space-y-6">
@@ -72,7 +127,7 @@
 
                       <div>
                         <button type="submit" id="sourceSubmitButton"
-                          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#ffa500] hover:bg-[#eb9100] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#ffa500]">
+                          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#8272D1] hover:bg-[#8272D1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8272D1]">
                           Login to Source
                         </button>
                       </div>
@@ -80,7 +135,14 @@
                   </div>
                 </div>
               </div>
-              <div>
+              <div id="sync-btn-bg"
+                class="sync-btn disabled inline-flex items-center px-12 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-orange-500 hover:bg-[#ffa500] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#ffa500]">
+                <button type="submit" id="syncSubmitButton" class="">
+                  Sync
+                </button>
+                <img class="ml-2 arrow" src="/images/arrow-right.svg" style="height: 10px" alt="" />
+              </div>
+              <!-- <div>
                 <div class="mx-auto text-center">
                   <div class="bg-white py-24 px-4 shadow sm:rounded-lg sm:px-10">
                     <button type="submit" id="syncSubmitButton"
@@ -102,17 +164,21 @@
                     </div>
                   </div>
                 </div>
-              </div>
-              <div>
+              </div> -->
+              <div class="border-4 border-dashed border-gray-200 rounded-lg px-5 py-5">
                 <div class="sm:mx-auto sm:w-full sm:max-w-md">
+                  <div class="px-4 py-5 mb-4 bg-[#F8F5FF] shadow rounded-lg overflow-hidden sm:p-6">
+                    <span class="text-xl font-medium text-gray-500 truncate">Pin Count</span>
+                    <span class="mt-1 ml-5 text-xl font-semibold text-primary" id="destinationCount"></span>
+                  </div>
                   <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                     <h5 class="text-center">Destination Provider</h5><br><br>
                     <form name="destinationLogin" class="space-y-6">
                       <div>
                         <label for="email" class="block text-sm font-medium text-gray-700"> Endpoint </label>
                         <div class="mt-1">
-                          <input placeholder="https://api.filebase.io/v1/ipfs" value="https://api.filebase.io/v1/ipfs"
-                            type="text" name="endpoint" id="inputDestinationEndpoint" required
+                          <input placeholder="https://api.4everland.dev" value="https://api.4everland.dev" type="text"
+                            name="endpoint" id="inputDestinationEndpoint" required
                             class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         </div>
                       </div>
@@ -127,7 +193,7 @@
 
                       <div>
                         <button type="submit" id="destinationSubmitButton"
-                          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#ffa500] hover:bg-[#eb9100] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#ffa500]">
+                          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#8272D1] hover:bg-[#8272D1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8272D1]">
                           Login to Destination
                         </button>
                       </div>
